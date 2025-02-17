@@ -491,9 +491,11 @@ def analyze_volume_snapshots(
     volume_info = ec2.describe_volumes(VolumeIds=[volume_id])["Volumes"][0]
     volume_size = volume_info["Size"]  # Size in GiB
 
-    # Fetch snapshots for this volume
+    # Fetch snapshots for this volume (limited to 50)
     snapshots = ec2.describe_snapshots(
-        Filters=[{"Name": "volume-id", "Values": [volume_id]}], OwnerIds=["self"]
+        Filters=[{"Name": "volume-id", "Values": [volume_id]}],
+        OwnerIds=["self"],
+        MaxResults=50
     )["Snapshots"]
 
     # Sort snapshots by creation date
