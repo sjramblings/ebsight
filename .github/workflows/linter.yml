@@ -1,0 +1,46 @@
+---
+name: Lint
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: read
+  statuses: write  # Needed for GitHub Status Checks
+
+jobs:
+  lint:
+    name: Lint Code Base
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          # Full git history is needed to get a proper
+          # list of changed files
+          fetch-depth: 0
+
+      - name: Super-Linter
+        uses: super-linter/super-linter@v7.2.1
+        env:
+          VALIDATE_ALL_CODEBASE: true
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Linter specific settings
+          VALIDATE_PYTHON_BLACK: true
+          VALIDATE_PYTHON_FLAKE8: true
+          VALIDATE_PYTHON_ISORT: true
+          VALIDATE_PYTHON_PYLINT: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_YAML: true
+          VALIDATE_GITHUB_ACTIONS: true
+          # Ignore auto-generated files
+          IGNORE_GENERATED_FILES: true
+          # Customize rules path
+          LINTER_RULES_PATH: .
+          # Prettier config for markdown
+          MARKDOWN_CONFIG_FILE: .markdownlint.yaml 
